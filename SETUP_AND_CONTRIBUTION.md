@@ -242,7 +242,6 @@ curl -I http://localhost:8080/k8s-docs
 
 | Symptom | Cause | Solution |
 |---|---|---|
-| `no space left on device` during `go build` | Mac disk capacity is full. | Clean docker images with `docker system prune -f` and empty macOS Trash. |
 | `operation not permitted` when running tests locally | macOS sandbox restriction on loopback ports. | Run with unsandboxed terminal or bypass permissions. |
 | `CrashLoopBackOff` on operator pod | Operator cannot resolve backend service DNS. | Ensure backend is running in `shortener-backend` with `kubectl get pods -n shortener-backend`. |
 | Hits not updating on CR | Operator poll interval has not elapsed or hit count hasn't changed. | The controller polls every 10s and only updates status if `hits` count changed (etcd optimization). |
