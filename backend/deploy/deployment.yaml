@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener-backend
+  namespace: shortener-backend
+  labels:
+    app: url-shortener-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: url-shortener-backend
+  template:
+    metadata:
+      labels:
+        app: url-shortener-backend
+    spec:
+      containers:
+      - name: backend
+        image: url-shortener-backend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_PATH
+          value: "/data/urls.db"
+        - name: BASE_URL
+          value: "http://localhost:8080"
+        volumeMounts:
+        - name: data-volume
+          mountPath: /data
+      volumes:
+      - name: data-volume
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-shortener-backend
+  namespace: shortener-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: url-shortener-backend
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: url-shortener-ingress
+  namespace: shortener-backend
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: url-shortener-backend
+            port:
+              number: 8080

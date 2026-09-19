@@ -1,0 +1,32 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - shortener.tapsi.cloud
+  resources:
+  - urlshorteners
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - shortener.tapsi.cloud
+  resources:
+  - urlshorteners/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - shortener.tapsi.cloud
+  resources:
+  - urlshorteners/status
+  verbs:
+  - get
+  - patch
+  - update

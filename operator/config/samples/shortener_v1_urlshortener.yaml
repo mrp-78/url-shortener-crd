@@ -1,0 +1,8 @@
+apiVersion: shortener.tapsi.cloud/v1
+kind: URLShortener
+metadata:
+  name: k8s-docs
+  namespace: default
+spec:
+  targetUrl: "https://kubernetes.io/docs/home/"
+  customSlug: "k8s-docs"
