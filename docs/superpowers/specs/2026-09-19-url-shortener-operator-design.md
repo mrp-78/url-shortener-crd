@@ -51,13 +51,15 @@ The application decouples the **Control Plane** (the Operator managing CRDs) fro
    * Kind: `URLShortener`
    * Scoped to namespaces.
 2. **URL Shortener Backend Service (`url-shortener-backend`):**
-   * Lightweight HTTP server running inside the cluster in namespace `shortener-system`.
+   * Lightweight HTTP server running inside the cluster in namespace `shortener-backend`.
    * SQLite database persisted at `/data/urls.db` (via mounted volume).
    * Exposes REST endpoints for the operator and public redirect endpoints for visitors.
+   * Internal DNS: `http://url-shortener-backend.shortener-backend.svc.cluster.local:8080`.
 3. **URL Shortener Operator (`url-shortener-operator`):**
    * Built with Kubebuilder.
-   * Runs in the cluster in a dedicated namespace `shortener-system` (with its own ServiceAccount and RBAC).
-   * Reconciles `URLShortener` custom resources across namespaces.
+   * Runs in the cluster in its own dedicated namespace `shortener-system` (with its own ServiceAccount, ClusterRole, and ClusterRoleBinding).
+   * Reconciles `URLShortener` custom resources across all user namespaces.
+   * Reaches the backend service via environment variable `BACKEND_SERVICE_URL`.
 
 ---
 
