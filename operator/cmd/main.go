@@ -35,7 +35,10 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
+	"time"
+
 	shortenerv1 "github.com/learn/kuber-crd/operator/api/v1"
+	"github.com/learn/kuber-crd/operator/internal/client"
 	"github.com/learn/kuber-crd/operator/internal/controller"
 	// +kubebuilder:scaffold:imports
 )
@@ -182,9 +185,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	backendURL := os.Getenv("BACKEND_SERVICE_URL")
+	if backendURL == "" {
+		backendURL = "http://url-shortener-backend.shortener-backend.svc.cluster.local:8080"
+	}
+	setupLog.Info("Connecting to backend service", "url", backendURL)
+	backendClient := client.NewBackendClient(backendURL)
+
 	if err := (&controller.URLShortenerReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		Client:        mgr.GetClient(),
+		Scheme:        mgr.GetScheme(),
+		BackendClient: backendClient,
+		PollInterval:  10 * time.Second,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "Failed to create controller", "controller", "urlshortener")
 		os.Exit(1)
