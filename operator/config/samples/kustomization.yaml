@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- shortener_v1_urlshortener.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

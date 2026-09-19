@@ -1,0 +1,9 @@
+apiVersion: shortener.tapsi.cloud/v1
+kind: URLShortener
+metadata:
+  labels:
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/managed-by: kustomize
+  name: urlshortener-sample
+spec:
+  # TODO(user): Add fields here
