@@ -47,17 +47,17 @@ The application decouples the **Control Plane** (the Operator managing CRDs) fro
 ### Components
 
 1. **CRD (`URLShortener`):**
-   * API Group: `shortener.learn.k8s.io/v1alpha1`
+   * API Group: `shortener.tapsi.cloud/v1`
    * Kind: `URLShortener`
    * Scoped to namespaces.
 2. **URL Shortener Backend Service (`url-shortener-backend`):**
-   * Lightweight HTTP server running inside the cluster.
+   * Lightweight HTTP server running inside the cluster in namespace `shortener-system`.
    * SQLite database persisted at `/data/urls.db` (via mounted volume).
    * Exposes REST endpoints for the operator and public redirect endpoints for visitors.
 3. **URL Shortener Operator (`url-shortener-operator`):**
    * Built with Kubebuilder.
-   * Runs in the cluster (or locally during development via `make run`).
-   * Reconciles `URLShortener` custom resources.
+   * Runs in the cluster in a dedicated namespace `shortener-system` (with its own ServiceAccount and RBAC).
+   * Reconciles `URLShortener` custom resources across namespaces.
 
 ---
 
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS urls (
 ## 5. Operator Reconciler (Control Plane) Specification
 
 ### Finalizer
-* Constant: `shortener.learn.k8s.io/finalizer`
+* Constant: `shortener.tapsi.cloud/finalizer`
 
 ### Reconcile Flow
 1. **Fetch Resource:** If not found, return empty result (resource has been deleted from k8s).
